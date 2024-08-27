@@ -54,7 +54,6 @@ int     createMMU (int frames)
 		for (int i = 0; i < frames; i++){
 			table->entries[i].pageNo = -1; //indicates that is not allocated
 			table->entries[i].modified = 0;
-			enqueue(table->q, i);
 		}
 
 
@@ -133,7 +132,6 @@ page    selectVictim(int page_number, enum repl  mode )
 				case lru:
 					victimIndex = dequeue(table->q);
 					victim = table->entries[victimIndex];
-
 					break;
 				default:
 					victim.pageNo = -1;
