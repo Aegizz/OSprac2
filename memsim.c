@@ -122,7 +122,7 @@ page    selectVictim(int page_number, enum repl  mode )
 {
         page    victim;
         // to do 
-        victim.pageNo = 0;
+        victim.pageNo = -1;
         victim.modified = 0;
 		int victimIndex;
 		//Simple LRU for now
