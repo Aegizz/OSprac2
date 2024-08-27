@@ -135,7 +135,7 @@ page    selectVictim(int page_number, enum repl  mode )
 					enqueue(table->q, victimIndex);
 					break;
 				case fifo:
-					victimIndex = dequeue(table->q->front);
+					victimIndex = dequeue(table->q);
 					victim = table->entries[victimIndex];
 					enqueue(table->q, victimIndex);
             		break;
