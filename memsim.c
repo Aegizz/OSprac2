@@ -12,7 +12,8 @@ typedef struct{
 	page * entries;
 	int size;
 } pageTable;
-
+//global page table pointer
+pageTable * table;
 
 
 enum    repl { random, fifo, lru, clock};
@@ -30,7 +31,7 @@ int     createMMU (int frames)
         // to do
 
 		//allocate space for Page Table
-		pageTable * table = (pageTable *)malloc(sizeof(pageTable));
+		table = (pageTable *)malloc(sizeof(pageTable));
 		//error handling for malloc
 		if (table == NULL){
 			perror("Failed to create Page Table");
