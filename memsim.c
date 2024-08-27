@@ -260,7 +260,6 @@ main(int argc, char *argv[])
 				enqueue(table->q, frame_no);
 			} else if (replace == clock){
 				Node * temp = insertNode(table->c, frame_no);
-				printf("Frame Number: %d, Curr Node: %d", frame_no, table->c->curr->data);
 				table->entries[table->c->curr->data].refBit = 1;
 			}
 		    if (debugmode) printf( "reading    %8d \n", page_number) ;
@@ -270,8 +269,6 @@ main(int argc, char *argv[])
 				enqueue(table->q, frame_no);
 			} else if (replace == clock){
 				Node * temp = insertNode(table->c, frame_no);
-				printf("Frame Number: %d, Curr Node: %d", frame_no, table->c->curr->data);
-
 				table->entries[table->c->curr->data].refBit = 1;
 			}
 
