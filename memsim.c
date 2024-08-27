@@ -217,7 +217,6 @@ main(int argc, char *argv[])
 	{
 		page_number =  address >> pageoffset;
 		frame_no = checkInMemory( page_number) ;    /* ask for physical address */
-		printf("%d: %d\n", frame_no, page_number);
 		if ( frame_no == -1 )
 		{
 		  disk_reads++ ;			/* Page fault, need to load it into memory */
