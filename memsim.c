@@ -133,6 +133,7 @@ page    selectVictim(int page_number, enum repl  mode )
 				case lru:
 					victimIndex = checkInMemory(table->q->front->data);
 					victim = table->entries[victimIndex];
+					removeIndex(table->q, victimIndex);
 					enqueue(table->q, victimIndex);
 					break;
 				default:
