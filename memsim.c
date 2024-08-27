@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "circularlist.c"
+#include "circularList.c"
 typedef struct {
         int pageNo;
         int modified;
