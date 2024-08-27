@@ -124,15 +124,19 @@ page    selectVictim(int page_number, enum repl  mode )
         // to do 
         victim.pageNo = 0;
         victim.modified = 0;
-
+		int victimIndex;
 		//Simple LRU for now
 		//will add handling to check mode later
-		if (mode == lru){
-			int victimIndex = -1;
-			
+		switch (mode){
+				case lru:
+					victimIndex = checkInMemory(table->q->front);
+					victim = table->entries[victimIndex];
+					break;
+				default:
+					victimIndex = checkInMemory(table->q->front);
+					victim = table->entries[victimIndex];
+					break;		
 		}
-
-
 
 
         return (victim) ;
@@ -201,7 +205,7 @@ main(int argc, char *argv[])
 	
 	done = createMMU (numFrames);
 	if ( done == -1 ) {
-		 printf( "Cannot create MMU" ) ;
+		 printf( "Cannot create MMU") ;
 		 exit(-1);
         }
 	no_events = 0 ;
