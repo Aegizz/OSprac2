@@ -103,7 +103,7 @@ int     allocateFrame( int page_number)
 				if (table->entries[i].pageNo == -1){
 					//update values
 					table->entries[i].pageNo = page_number;
-					table->entries[i].modified = 0;
+					table->entries[i].modified = 1;
 					enqueue(table->q, i);
 					//return iterator to it
 					return i;
@@ -129,17 +129,12 @@ page    selectVictim(int page_number, enum repl  mode )
 		//Simple LRU for now
 		//will add handling to check mode later
 		switch (mode){
+				case fifo:
 				case lru:
-					printf("LRU\n");
 					victimIndex = dequeue(table->q);
 					victim = table->entries[victimIndex];
 
 					break;
-				case fifo:
-					printf("FIFO\n");
-					victimIndex = dequeue(table->q);
-					victim = table->entries[victimIndex];
-            		break;
 				default:
 					victim.pageNo = -1;
 					victim.modified = 0;
