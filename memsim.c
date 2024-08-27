@@ -133,20 +133,21 @@ page    selectVictim(int page_number, enum repl  mode )
 					printf("LRU\n");
 					victimIndex = dequeue(table->q);
 					victim = table->entries[victimIndex];
-					enqueue(table->q, victimIndex);
+
 					break;
 				case fifo:
 					printf("FIFO\n");
 					victimIndex = dequeue(table->q);
 					victim = table->entries[victimIndex];
-					enqueue(table->q, victimIndex);
             		break;
 				default:
 					victim.pageNo = -1;
 					victim.modified = 0;
 					break;	
 		}
-
+		table->entries[victimIndex].pageNo = page_number;
+		table->entries[victimIndex].modified = 0;
+		enqueue(table->q, victimIndex);
 
         return (victim) ;
 
@@ -226,10 +227,9 @@ main(int argc, char *argv[])
 	{
 		page_number =  address >> pageoffset;
 		frame_no = checkInMemory( page_number) ;    /* ask for physical address */
-
 		if ( frame_no == -1 )
 		{
-		//   disk_reads++ ;			/* Page fault, need to load it into memory */
+		  disk_reads++ ;			/* Page fault, need to load it into memory */
 		  if (debugmode) 
 		      printf( "Page fault %8d \n", page_number) ;
 		  if (allocated < numFrames)  			/* allocate it to an empty frame */
@@ -242,7 +242,6 @@ main(int argc, char *argv[])
 		      frame_no = checkInMemory( page_number) ;    /* find out the frame the new page is in */
 		   if (Pvictim.modified)           /* need to know victim page and modified  */
 	 	      {
-                    //   disk_writes++;			    
                       if (debugmode) printf( "Disk write %8d \n", Pvictim.pageNo) ;
 		      }
 		   else
@@ -250,13 +249,12 @@ main(int argc, char *argv[])
 		   }
 		}
 		if ( rw == 'R'){
-			disk_reads++;
 		    if (debugmode) printf( "reading    %8d \n", page_number) ;
 		}
 		else if ( rw == 'W'){
+
+		    // mark page in page table as written - modified
 			disk_writes++;
-			table->entries[checkInMemory(page_number)].modified = 1;
-		    // mark page in page table as written - modified  
 		    if (debugmode) printf( "writting   %8d \n", page_number) ;
 		}
 		 else {
