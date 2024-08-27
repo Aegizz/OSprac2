@@ -6,6 +6,15 @@ typedef struct {
         int pageNo;
         int modified;
 } page;
+
+//pageTable
+typedef struct{
+	page * entries;
+	int size;
+} pageTable;
+
+
+
 enum    repl { random, fifo, lru, clock};
 int     createMMU( int);
 int     checkInMemory( int ) ;
@@ -19,6 +28,30 @@ int     createMMU (int frames)
 {
 
         // to do
+
+		//allocate space for Page Table
+		pageTable * table = (pageTable *)malloc(sizeof(pageTable));
+		//error handling for malloc
+		if (table == NULL){
+			perror("Failed to create Page Table");
+			exit(-1);
+		}
+		//allocate space for table entries
+		table->entries = (page * )malloc(frames * sizeof(page));
+		//error handling for malloc
+		if (table->entries == NULL){
+			perror("Failed to allocate memory for page entries");
+			//prevent memory leak
+			free(table);
+			exit(-1);
+		}
+		//allocate correct table size
+		table->size = frames;
+		for (int i = 0; i < frames; i++){
+			table->entries[i].pageNo = -1; //indicates that is not allocated
+			table->entries[i].modified = 0;
+		}
+
 
         return 0;
 }
