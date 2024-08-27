@@ -63,8 +63,6 @@ int     createMMU (int frames)
 /* Checks for residency: returns frame no or -1 if not found */
 int     checkInMemory( int page_number)
 {
-	//really do not need to allocate memory for this, can be hard coded.
-        int     result = -1;
 
         // to do
 		//error handling
@@ -73,13 +71,12 @@ int     checkInMemory( int page_number)
 			for (int i = 0; i < table->size; i++){
 				//if found in memory return address in pagetable
 				if (table->entries[i].pageNo == page_number){
-					result = i;
 					return i;
 					//return found entry
 				}
 			}
 			//return result (in this case negative 1)
-			return result;
+			return -1;
 		} else {
 			//exit if accessed before MMU/Page table allocated
 			perror("MMU/Page Table not initialised!");
@@ -87,7 +84,7 @@ int     checkInMemory( int page_number)
 			return -1;
 		}
 		//will never reach this....
-        return result ;
+        return -1;
 }
 
 /* allocate page to the next free frame and record where it put it */
@@ -220,6 +217,7 @@ main(int argc, char *argv[])
 	{
 		page_number =  address >> pageoffset;
 		frame_no = checkInMemory( page_number) ;    /* ask for physical address */
+		printf("%d: %d\n", frame_no, page_number);
 		if ( frame_no == -1 )
 		{
 		  disk_reads++ ;			/* Page fault, need to load it into memory */
@@ -243,9 +241,12 @@ main(int argc, char *argv[])
 		   }
 		}
 		if ( rw == 'R'){
+			enqueue(table->q, frame_no);
 		    if (debugmode) printf( "reading    %8d \n", page_number) ;
 		}
 		else if ( rw == 'W'){
+			enqueue(table->q, frame_no);
+
 			table->entries[checkInMemory(page_number)].modified = 1;
 		    // mark page in page table as written - modified
 		    if (debugmode) printf( "writting   %8d \n", page_number) ;

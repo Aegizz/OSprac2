@@ -30,6 +30,9 @@ Queue *createQueue() {
 // Function to add an element to the queue
 void enqueue(Queue *q, int new_data) {
     Node *new_node = createNode(new_data);
+    if (checkInQueue(q, new_data)){
+        removeIndex(q, new_data);
+    }
     if (q->rear == NULL) {
         q->front = q->rear = new_node;
         return;
@@ -95,4 +98,15 @@ void removeIndex(Queue *q, int index) {
         }
         temp = temp->next;
     }
+}
+
+int checkInQueue(Queue * q, int index){
+    Node * temp = q->front;
+    while (temp != NULL){
+        if (temp->data == index){
+            return 1;
+        }
+        temp=temp->next;
+    }
+    return -1;
 }
