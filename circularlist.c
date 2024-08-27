@@ -1,11 +1,7 @@
 #include <limits.h>
 #include <stdio.h>
+#include "linkedList.c"
 
-typedef struct Node {
-    int data;
-    struct Node *next;
-    struct Node *prev;
-} Node;
 
 typedef struct Circle{
     struct Node * curr;
