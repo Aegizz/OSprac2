@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-
+#include "linkedList.c"
 
 typedef struct {
         int pageNo;
@@ -11,6 +11,7 @@ typedef struct {
 typedef struct{
 	page * entries;
 	int size;
+	Queue * q;
 } pageTable;
 //global page table pointer
 pageTable * table;
@@ -48,9 +49,12 @@ int     createMMU (int frames)
 		}
 		//allocate correct table size
 		table->size = frames;
+		table->q = createQueue();
+
 		for (int i = 0; i < frames; i++){
 			table->entries[i].pageNo = -1; //indicates that is not allocated
 			table->entries[i].modified = 0;
+			enqueue(table->q, i);
 		}
 
 
@@ -60,11 +64,30 @@ int     createMMU (int frames)
 /* Checks for residency: returns frame no or -1 if not found */
 int     checkInMemory( int page_number)
 {
+	//really do not need to allocate memory for this, can be hard coded.
         int     result = -1;
 
         // to do
-
-
+		//error handling
+		if (table != NULL && table->entries != NULL){
+			//loop through table
+			for (int i = 0; i < table->size; i++){
+				//if found in memory return address in pagetable
+				if (table->entries[i].pageNo == page_number){
+					result = i;
+					return i;
+					//return found entry
+				}
+			}
+			//return result (in this case negative 1)
+			return result;
+		} else {
+			//exit if accessed before MMU/Page table allocated
+			perror("MMU/Page Table not initialised!");
+			exit(-1);
+			return -1;
+		}
+		//will never reach this....
         return result ;
 }
 
@@ -72,7 +95,26 @@ int     checkInMemory( int page_number)
 int     allocateFrame( int page_number)
 {
         // to do
-        return;
+		//check that is allocated
+		if (table != NULL && table->entries != NULL){
+			//loop through the table
+			for (int i = 0; i < table->size; i++){
+				//check if page is unallocated
+				if (table->entries[i].pageNo == -1){
+					//update values
+					table->entries[i].pageNo = page_number;
+					table->entries->modified = 0;
+					//return iterator to it
+					return i;
+				}
+			}
+			return -1;
+		} else {
+			perror("MMU/Page Table not initialised!");
+			exit(-1);
+			return -1;
+		}
+
 }
 
 /* Selects a victim for eviction/discard according to the replacement algorithm,  returns chosen frame_no  */
@@ -82,7 +124,20 @@ page    selectVictim(int page_number, enum repl  mode )
         // to do 
         victim.pageNo = 0;
         victim.modified = 0;
+
+		//Simple LRU for now
+		//will add handling to check mode later
+		if (mode == lru){
+			int victimIndex = -1;
+			
+		}
+
+
+
+
         return (victim) ;
+
+
 }
 
 		
