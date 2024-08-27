@@ -36,18 +36,20 @@ void enqueue(Queue * q, int new_data){
     q->rear = new_node;
 }
 
-void dequeue(Queue* q){
+int dequeue(Queue* q){
     if (q->front == NULL && q->rear == NULL){
-        return;
+        return -1;
     }
 
     Node * temp = q->front;
+    int data = temp->data;
     q->front = q->front->next;
     if (q->front == NULL){
         q->rear = NULL;
     }
 
     free(temp);
+    return data;
 }
 
 int getFront(Queue * q){

@@ -136,10 +136,15 @@ page    selectVictim(int page_number, enum repl  mode )
 					removeIndex(table->q, victimIndex);
 					enqueue(table->q, victimIndex);
 					break;
-				default:
-					victimIndex = checkInMemory(table->q->front->data);
+				case fifo:
+					victimIndex = dequeue(table->q->front);
 					victim = table->entries[victimIndex];
-					break;		
+					enqueue(table->q, victimIndex);
+            		break;
+				default:
+					victim.pageNo = -1;
+					victim.modified = 0;
+					break;	
 		}
 
 
