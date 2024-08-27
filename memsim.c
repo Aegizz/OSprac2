@@ -240,11 +240,15 @@ main(int argc, char *argv[])
 		   }
 		}
 		if ( rw == 'R'){
-			enqueue(table->q, frame_no);
+			if (replace == lru){
+				enqueue(table->q, frame_no);
+			}
 		    if (debugmode) printf( "reading    %8d \n", page_number) ;
 		}
 		else if ( rw == 'W'){
-			enqueue(table->q, frame_no);
+			if (replace == lru){
+				enqueue(table->q, frame_no);
+			}
 
 			table->entries[checkInMemory(page_number)].modified = 1;
 		    // mark page in page table as written - modified
