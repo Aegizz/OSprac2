@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "circularlist.c"
-
 typedef struct {
         int pageNo;
         int modified;
@@ -138,12 +137,19 @@ page    selectVictim(int page_number, enum repl  mode )
 					victim = table->entries[victimIndex];
 					break;
 				case clock:
-					while (table->entries[table->c->curr->data].refBit != 0){
-						table->entries[table->c->curr->data].refBit = 0;
+
+					if (table->c->curr != NULL){
+						while (table->entries[table->c->curr->data].refBit == 1){
+							table->entries[table->c->curr->data].refBit = 0;
+							rotate(table->c);
+						}
+						victimIndex = table->c->curr->data;
 						rotate(table->c);
+					} else {
+						printf("Error curr is NULL \n");
+
+						exit(-1);
 					}
-					victimIndex = table->c->curr->data;
-					rotate(table->c);
 					break;
 				default:
 					victim.pageNo = -1;
@@ -236,29 +242,26 @@ main(int argc, char *argv[])
 		  disk_reads++ ;			/* Page fault, need to load it into memory */
 		  if (debugmode) 
 		      printf( "Page fault %8d \n", page_number) ;
-		  if (allocated < numFrames)  			/* allocate it to an empty frame */
-		   {
+		  if (allocated < numFrames)  			/* allocate it to an empty frame */ {
                      frame_no = allocateFrame(page_number);
-		     allocated++;
-                   }
-                   else{
+		     		 allocated++;
+            } else {
+
 		      Pvictim = selectVictim(page_number, replace) ;   /* returns page number of the victim  */
 		      frame_no = checkInMemory( page_number) ;    /* find out the frame the new page is in */
-		   if (Pvictim.modified)           /* need to know victim page and modified  */
-	 	      {
-					disk_writes++;
-                      if (debugmode) printf( "Disk write %8d \n", Pvictim.pageNo) ;
-		      }
-		   else
-                      if (debugmode) printf( "Discard    %8d \n", Pvictim.pageNo) ;
-		   }
+			  if (Pvictim.modified)           /* need to know victim page and modified  */ {
+			    disk_writes++;
+			    if (debugmode) printf( "Disk write %8d \n", Pvictim.pageNo) ;
+		      } else if (debugmode) printf( "Discard    %8d \n", Pvictim.pageNo) ;
+		    }
 		}
 		if ( rw == 'R'){
 			if (replace == lru){
 				enqueue(table->q, frame_no);
 			} else if (replace == clock){
-				Node * temp = findValue(table->c, frame_no);
-				table->entries[temp->data].refBit = 1;
+				Node * temp = insertNode(table->c, frame_no);
+				printf("Frame Number: %d, Curr Node: %d", frame_no, table->c->curr->data);
+				table->entries[table->c->curr->data].refBit = 1;
 			}
 		    if (debugmode) printf( "reading    %8d \n", page_number) ;
 		}
@@ -266,8 +269,10 @@ main(int argc, char *argv[])
 			if (replace == lru){
 				enqueue(table->q, frame_no);
 			} else if (replace == clock){
-				Node * temp = findValue(table->c, frame_no);
-				table->entries[temp->data].refBit = 1;
+				Node * temp = insertNode(table->c, frame_no);
+				printf("Frame Number: %d, Curr Node: %d", frame_no, table->c->curr->data);
+
+				table->entries[table->c->curr->data].refBit = 1;
 			}
 
 			table->entries[checkInMemory(page_number)].modified = 1;
@@ -278,7 +283,7 @@ main(int argc, char *argv[])
 		      printf( "Badly formatted file. Error on line %d\n", no_events+1); 
 		      exit (-1);
 		}
-
+		
 		no_events++;
         	do_line = fscanf(trace,"%x %c",&address,&rw);
 	}
