@@ -103,7 +103,7 @@ int     allocateFrame( int page_number)
 				if (table->entries[i].pageNo == -1){
 					//update values
 					table->entries[i].pageNo = page_number;
-					table->entries->modified = 0;
+					table->entries[i].modified = 0;
 					removeIndex(table->q, -1);
 					enqueue(table->q, i);
 					//return iterator to it
