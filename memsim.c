@@ -104,7 +104,6 @@ int     allocateFrame( int page_number)
 					//update values
 					table->entries[i].pageNo = page_number;
 					table->entries[i].modified = 0;
-					removeIndex(table->q, -1);
 					enqueue(table->q, i);
 					//return iterator to it
 					return i;
@@ -131,9 +130,8 @@ page    selectVictim(int page_number, enum repl  mode )
 		//will add handling to check mode later
 		switch (mode){
 				case lru:
-					victimIndex = checkInMemory(table->q->front->data);
+					victimIndex = dequeue(table->q);
 					victim = table->entries[victimIndex];
-					removeIndex(table->q, victimIndex);
 					enqueue(table->q, victimIndex);
 					break;
 				case fifo:
