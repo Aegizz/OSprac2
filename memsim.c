@@ -133,7 +133,7 @@ page    selectVictim(int page_number, enum repl  mode )
 					victim = table->entries[victimIndex];
 					break;
 				default:
-					victimIndex = checkInMemory(table->q->front);
+					victimIndex = checkInMemory(table->q->front->data);
 					victim = table->entries[victimIndex];
 					break;		
 		}

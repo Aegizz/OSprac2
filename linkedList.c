@@ -1,7 +1,5 @@
 #include <limits.h>
 #include <stdio.h>
-#include <stdlib.h>
-
 
 typedef struct Node {
     int data;
@@ -54,7 +52,7 @@ void dequeue(Queue* q){
 
 int getFront(Queue * q){
     if (q->front == NULL && q->rear == NULL){
-        return;
+        return INT_MIN;
     }
     return q->front->data;
 }
