@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include "linkedList.c"
 #include "circularlist.c"
 
 typedef struct {
