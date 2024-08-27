@@ -144,6 +144,7 @@ page    selectVictim(int page_number, enum repl  mode )
 							rotate(table->c);
 						}
 						victimIndex = table->c->curr->data;
+						victim = table->entries[victimIndex];
 						rotate(table->c);
 					} else {
 						printf("Error curr is NULL \n");
