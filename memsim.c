@@ -131,7 +131,7 @@ page    selectVictim(int page_number, enum repl  mode )
 		//will add handling to check mode later
 		switch (mode){
 				case lru:
-					victimIndex = checkInMemory(table->q->front);
+					victimIndex = checkInMemory(table->q->front->data);
 					victim = table->entries[victimIndex];
 					enqueue(table->q, victimIndex);
 					break;
