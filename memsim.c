@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include "linkedList.c"
-
+#include "circularlist.c"
 typedef struct {
         int pageNo;
         int modified;
+		int refBit;
 } page;
 
 //pageTable
@@ -12,6 +13,7 @@ typedef struct{
 	page * entries;
 	int size;
 	Queue * q;
+	Circle * c;
 } pageTable;
 //global page table pointer
 pageTable * table;
@@ -50,10 +52,11 @@ int     createMMU (int frames)
 		//allocate correct table size
 		table->size = frames;
 		table->q = createQueue();
-
+		table->c = createCircle();
 		for (int i = 0; i < frames; i++){
 			table->entries[i].pageNo = -1; //indicates that is not allocated
 			table->entries[i].modified = 0;
+			table->entries[i].refBit = 0;
 		}
 
 
@@ -100,7 +103,7 @@ int     allocateFrame( int page_number)
 					//update values
 					table->entries[i].pageNo = page_number;
 					table->entries[i].modified = 0;
-					enqueue(table->q, i);
+					table->entries[i].refBit = 0;
 					//return iterator to it
 					return i;
 				}
@@ -130,6 +133,18 @@ page    selectVictim(int page_number, enum repl  mode )
 					victimIndex = dequeue(table->q);
 					victim = table->entries[victimIndex];
 					break;
+				case random:
+					victimIndex = srand(time(NULL)) % numFrames;
+					victim = table->entries[victimIndex];
+					break;
+				case clock:
+					while (table->entries[table->c->curr->data].refBit != 0){
+						table->entries[table->c->curr->data].refBit = 0;
+						rotate(table->c);
+					}
+					victimIndex = table->c->curr->data;
+					rotate(table->c);
+					break;
 				default:
 					victim.pageNo = -1;
 					victim.modified = 0;
@@ -137,8 +152,7 @@ page    selectVictim(int page_number, enum repl  mode )
 		}
 		table->entries[victimIndex].pageNo = page_number;
 		table->entries[victimIndex].modified = 0;
-		enqueue(table->q, victimIndex);
-
+		table->entries[victimIndex].refBit = 0;
         return (victim) ;
 
 
@@ -242,12 +256,18 @@ main(int argc, char *argv[])
 		if ( rw == 'R'){
 			if (replace == lru){
 				enqueue(table->q, frame_no);
+			} else if (replace == clock){
+				Node * temp = findValue(table->c, frame_no);
+				table->entries[temp->data].refBit = 1;
 			}
 		    if (debugmode) printf( "reading    %8d \n", page_number) ;
 		}
 		else if ( rw == 'W'){
 			if (replace == lru){
 				enqueue(table->q, frame_no);
+			} else if (replace == clock){
+				Node * temp = findValue(table->c, frame_no);
+				table->entries[temp->data].refBit = 1;
 			}
 
 			table->entries[checkInMemory(page_number)].modified = 1;
