@@ -103,7 +103,7 @@ int     allocateFrame( int page_number)
 				if (table->entries[i].pageNo == -1){
 					//update values
 					table->entries[i].pageNo = page_number;
-					table->entries[i].modified = 1;
+					table->entries[i].modified = 0;
 					enqueue(table->q, i);
 					//return iterator to it
 					return i;
@@ -248,7 +248,7 @@ main(int argc, char *argv[])
 		    if (debugmode) printf( "reading    %8d \n", page_number) ;
 		}
 		else if ( rw == 'W'){
-
+			table->entries[checkInMemory(page_number)].modified = 1;
 		    // mark page in page table as written - modified
 		    if (debugmode) printf( "writting   %8d \n", page_number) ;
 		}
