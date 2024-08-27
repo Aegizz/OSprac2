@@ -242,6 +242,7 @@ main(int argc, char *argv[])
 		      frame_no = checkInMemory( page_number) ;    /* find out the frame the new page is in */
 		   if (Pvictim.modified)           /* need to know victim page and modified  */
 	 	      {
+					disk_writes++;
                       if (debugmode) printf( "Disk write %8d \n", Pvictim.pageNo) ;
 		      }
 		   else
@@ -254,7 +255,6 @@ main(int argc, char *argv[])
 		else if ( rw == 'W'){
 
 		    // mark page in page table as written - modified
-			disk_writes++;
 		    if (debugmode) printf( "writting   %8d \n", page_number) ;
 		}
 		 else {
