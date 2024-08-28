@@ -35,10 +35,7 @@ Node *insertNode(Circle *c, int data) {
     Node *new_node;
     
     // Check if the node with the given value already exists
-    Node *existing_node = findValue(c, data);
-    if (existing_node != NULL) {
-        return existing_node;
-    }
+
     
     // Create a new node
     new_node = createNode(data);
@@ -50,7 +47,10 @@ Node *insertNode(Circle *c, int data) {
         c->curr = c->tail = new_node;
         return c->curr;
     }
-    
+    Node *existing_node = findValue(c, data);
+    if (existing_node != NULL) {
+        return existing_node;
+    }
     // Insert new_node before curr
     new_node->next = c->curr;
     new_node->prev = c->tail;
@@ -58,7 +58,7 @@ Node *insertNode(Circle *c, int data) {
     // Update links
     c->tail->next = new_node;
     c->curr->prev = new_node;
-    c->tail = new_node; // Update tail to new_node
+    c->tail = new_node; // Update curr to new_node
 
     return c->tail; 
 }
@@ -78,4 +78,13 @@ Node *rotate(Circle *c) {
         return c->curr;
     }
     return NULL;
+}
+
+void rotateToNode(Circle * c, int data){
+    while (c->curr->data != data){
+        c->curr = c->curr->next;
+        c->tail = c->tail->next;
+        return;
+    }
+    return;
 }

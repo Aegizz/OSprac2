@@ -139,13 +139,15 @@ page    selectVictim(int page_number, enum repl  mode )
 				case clock:
 
 					if (table->c->curr != NULL){
-						while (table->entries[table->c->curr->data].refBit == 1){
+
+						while (table->entries[table->c->curr->data].refBit != 0){
 							table->entries[table->c->curr->data].refBit = 0;
 							rotate(table->c);
 						}
 						victimIndex = table->c->curr->data;
 						victim = table->entries[victimIndex];
 						rotate(table->c);
+
 					} else {
 						printf("Error curr is NULL \n");
 
@@ -165,6 +167,19 @@ page    selectVictim(int page_number, enum repl  mode )
 
 }
 
+void rotateAndSetBits(Circle * c, int data){
+	if (c->curr->data != data){
+		rotate(c);
+	} else {
+		return;
+	}
+	while (c->curr->data != data){
+		table->entries[c->curr->data].refBit = 0;
+        c->curr = c->curr->next;
+        c->tail = c->tail->next;
+    }
+
+}
 		
 main(int argc, char *argv[])
 {
@@ -256,22 +271,18 @@ main(int argc, char *argv[])
 		      } else if (debugmode) printf( "Discard    %8d \n", Pvictim.pageNo) ;
 		    }
 		}
-		if ( rw == 'R'){
-			if (replace == lru){
-				enqueue(table->q, frame_no);
-			} else if (replace == clock){
-				Node * temp = insertNode(table->c, frame_no);
-				table->entries[table->c->curr->data].refBit = 1;
-			}
-		    if (debugmode) printf( "reading    %8d \n", page_number) ;
+		if (replace == lru){
+			enqueue(table->q, frame_no);
+		} else if (replace == clock){
+			insertNode(table->c, frame_no);
+			table->entries[frame_no].refBit = 1;
 		}
-		else if ( rw == 'W'){
-			if (replace == lru){
-				enqueue(table->q, frame_no);
-			} else if (replace == clock){
-				Node * temp = insertNode(table->c, frame_no);
-				table->entries[table->c->curr->data].refBit = 1;
-			}
+		if ( rw == 'R'){
+
+			
+		    if (debugmode) printf( "reading    %8d \n", page_number) ;
+		} else if ( rw == 'W'){
+
 
 			table->entries[checkInMemory(page_number)].modified = 1;
 		    // mark page in page table as written - modified
