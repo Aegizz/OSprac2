@@ -37,9 +37,7 @@ Node *insertNode(Circle *c, int data) {
     // Check if the node with the given value already exists
     Node *existing_node = findValue(c, data);
     if (existing_node != NULL) {
-        c->curr = existing_node;
-        c->tail = existing_node->prev;
-        return c->curr;
+        return existing_node;
     }
     
     // Create a new node
