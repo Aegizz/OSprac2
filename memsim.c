@@ -288,10 +288,11 @@ int main(int argc, char *argv[])
         	do_line = fscanf(trace,"%x %c",&address,&rw);
 	}
 
-	printf( "total memory frames:  %d\n", numFrames);
+	/*printf( "total memory frames:  %d\n", numFrames);
 	printf( "events in trace:      %d\n", no_events);
 	printf( "total disk reads:     %d\n", disk_reads);
 	printf( "total disk writes:    %d\n", disk_writes);
-	printf( "page fault rate:      %.4f\n", (float) disk_reads/no_events);
+	printf( "page fault rate:      %.4f\n", (float) disk_reads/no_events);*/
+	printf( "%d, %.6f\n", numFrames, (float) disk_reads/no_events);
 }
 				
