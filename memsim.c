@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include "circularList.c"
 typedef struct {
         int pageNo;
@@ -19,7 +18,7 @@ typedef struct{
 pageTable * table;
 
 
-enum    repl { /*random,*/ fifo, lru, clock};
+enum    repl { random, fifo, lru, clock};
 int     createMMU( int);
 int     checkInMemory( int ) ;
 int     allocateFrame( int ) ;
@@ -133,21 +132,22 @@ page    selectVictim(int page_number, enum repl  mode )
 					victimIndex = dequeue(table->q);
 					victim = table->entries[victimIndex];
 					break;
-				/*case random:
-					srand(time(NULL));
-					victimIndex = rand() % numFrames;
+				case random:
+					victimIndex = srand(time(NULL)) % numFrames;
 					victim = table->entries[victimIndex];
-					break;*/
+					break;
 				case clock:
 
 					if (table->c->curr != NULL){
-						while (table->entries[table->c->curr->data].refBit == 1){
+
+						while (table->entries[table->c->curr->data].refBit != 0){
 							table->entries[table->c->curr->data].refBit = 0;
 							rotate(table->c);
 						}
 						victimIndex = table->c->curr->data;
 						victim = table->entries[victimIndex];
 						rotate(table->c);
+
 					} else {
 						printf("Error curr is NULL \n");
 
@@ -167,8 +167,21 @@ page    selectVictim(int page_number, enum repl  mode )
 
 }
 
+void rotateAndSetBits(Circle * c, int data){
+	if (c->curr->data != data){
+		rotate(c);
+	} else {
+		return;
+	}
+	while (c->curr->data != data){
+		table->entries[c->curr->data].refBit = 0;
+        c->curr = c->curr->next;
+        c->tail = c->tail->next;
+    }
+
+}
 		
-int main(int argc, char *argv[])
+main(int argc, char *argv[])
 {
   
 	char	*tracename;
@@ -203,8 +216,8 @@ int main(int argc, char *argv[])
         }
         if (strcmp(argv[3], "lru\0") == 0)
             replace = lru;
-	    /*else if (strcmp(argv[3], "rand\0") == 0)
-	     replace = random;*/
+	    else if (strcmp(argv[3], "rand\0") == 0)
+	     replace = random;
 	          else if (strcmp(argv[3], "clock\0") == 0)
                        replace = clock;		 
 	               else if (strcmp(argv[3], "fifo\0") == 0)
@@ -258,22 +271,18 @@ int main(int argc, char *argv[])
 		      } else if (debugmode) printf( "Discard    %8d \n", Pvictim.pageNo) ;
 		    }
 		}
-		if ( rw == 'R'){
-			if (replace == lru){
-				enqueue(table->q, frame_no);
-			} else if (replace == clock){
-				Node * temp = insertNode(table->c, frame_no);
-				table->entries[table->c->curr->data].refBit = 1;
-			}
-		    if (debugmode) printf( "reading    %8d \n", page_number) ;
+		if (replace == lru){
+			enqueue(table->q, frame_no);
+		} else if (replace == clock){
+			insertNode(table->c, frame_no);
+			table->entries[frame_no].refBit = 1;
 		}
-		else if ( rw == 'W'){
-			if (replace == lru){
-				enqueue(table->q, frame_no);
-			} else if (replace == clock){
-				Node * temp = insertNode(table->c, frame_no);
-				table->entries[table->c->curr->data].refBit = 1;
-			}
+		if ( rw == 'R'){
+
+			
+		    if (debugmode) printf( "reading    %8d \n", page_number) ;
+		} else if ( rw == 'W'){
+
 
 			table->entries[checkInMemory(page_number)].modified = 1;
 		    // mark page in page table as written - modified
