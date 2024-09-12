@@ -9,9 +9,8 @@ with open("bzip.trace", 'r') as bzipFile:
 numAddressesBzip = len(unique_addressesBzip)
 
 print("bZip: " + str(numAddressesBzip))
-print(unique_addressesBzip)
+#print(unique_addressesBzip)
 
-'''
 unique_addressesGCC = set()
 
 with open("gcc.trace", 'r') as gccFile:
@@ -49,4 +48,3 @@ with open("sixpack.trace", 'r') as sixpackFile:
 numAddressesSixpack = len(unique_addressesSixpack)
 
 print("Sixpack: " + str(numAddressesSixpack))
-'''
