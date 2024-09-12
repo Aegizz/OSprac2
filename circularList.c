@@ -1,5 +1,6 @@
 #include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "linkedList.c"
 
 // Define the Circle structure

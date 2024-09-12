@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "circularList.c"
 typedef struct {
         int pageNo;
@@ -18,7 +19,7 @@ typedef struct{
 pageTable * table;
 
 
-enum    repl { random, fifo, lru, clock};
+enum    repl { /*random,*/ fifo, lru, clock};
 int     createMMU( int);
 int     checkInMemory( int ) ;
 int     allocateFrame( int ) ;
@@ -132,10 +133,11 @@ page    selectVictim(int page_number, enum repl  mode )
 					victimIndex = dequeue(table->q);
 					victim = table->entries[victimIndex];
 					break;
-				case random:
-					victimIndex = srand(time(NULL)) % numFrames;
+				/*case random:
+					srand(time(NULL));
+					victimIndex = rand() % numFrames;
 					victim = table->entries[victimIndex];
-					break;
+					break;*/
 				case clock:
 
 					if (table->c->curr != NULL){
@@ -166,7 +168,7 @@ page    selectVictim(int page_number, enum repl  mode )
 }
 
 		
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   
 	char	*tracename;
@@ -201,8 +203,8 @@ main(int argc, char *argv[])
         }
         if (strcmp(argv[3], "lru\0") == 0)
             replace = lru;
-	    else if (strcmp(argv[3], "rand\0") == 0)
-	     replace = random;
+	    /*else if (strcmp(argv[3], "rand\0") == 0)
+	     replace = random;*/
 	          else if (strcmp(argv[3], "clock\0") == 0)
                        replace = clock;		 
 	               else if (strcmp(argv[3], "fifo\0") == 0)
