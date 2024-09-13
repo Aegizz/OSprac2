@@ -133,7 +133,8 @@ page    selectVictim(int page_number, enum repl  mode )
 					victim = table->entries[victimIndex];
 					break;
 				case random:
-					victimIndex = srand(time(NULL)) % numFrames;
+					srand(time(NULL));
+					victimIndex = rand() % numFrames;
 					victim = table->entries[victimIndex];
 					break;
 				case clock:
